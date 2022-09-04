@@ -1,6 +1,8 @@
 package edu.westga.cs3152.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 /**
  * The Class Network
  * 
@@ -12,6 +14,8 @@ import java.util.Collection;
  */
 public class Network {
 
+	private HashMap<String,Member> members;
+
 	/**
 	 * Instantiates a network without members.
 	 * 
@@ -19,6 +23,8 @@ public class Network {
 	 * @post getMembers().isEmpty()
 	 */
 	public Network() {
+		this.members = new HashMap<String,Member>();
+		
 	}
 
 	/**
@@ -31,7 +37,16 @@ public class Network {
 	 * @throws IllegalArgumentException if members.contains(null)
 	 */
 	public Network(Collection<String> members) {
-		// TODO
+		if (members == null) {
+			throw new NullPointerException("members cannot be null");
+		}
+		if (members.contains(null)) {
+			throw new IllegalArgumentException("members cannot contain null");
+		}
+		this.members = new HashMap<String,Member>();
+		for (String username : members) {
+			this.members.put(username, new Member(username));
+		}
 	}
 
 	/**
@@ -43,8 +58,11 @@ public class Network {
 	 * @return a collection of all members in this network without duplicates
 	 */
 	public Collection<String> getMembers() {
-		// TODO
-		return null;
+		ArrayList<String> memberNames = new ArrayList<String>();
+		for (String name : this.members.keySet()) {
+			memberNames.add(name);
+		}
+		return memberNames;
 	}
 
 	/**
@@ -57,8 +75,7 @@ public class Network {
 	 * @return true if the specified member is in this network
 	 */
 	public boolean contains(String member) {
-		// TODO
-		return false;
+		return this.getMembers().contains(member);
 	}
 
 	/**
@@ -72,8 +89,10 @@ public class Network {
 	 * @throws IllegalArgumentException if the precondition is not met
 	 */
 	public boolean hasInterest(String member, Interest interest) {
-		// TODO
-		return false;
+		if (!this.contains(member)) {
+			throw new IllegalArgumentException("member must be in the network");
+		}
+		return this.members.get(member).hasInterest(interest);
 	}
 
 	/**
@@ -87,8 +106,15 @@ public class Network {
 	 * @throws IllegalArgumentException if the precondition is not met
 	 */
 	public boolean isFriendOf(String member1, String member2) {
-		// TODO
-		return false;
+		if (!this.contains(member1)) {
+			throw new IllegalArgumentException("member1 must be in the network");
+		}
+		if (!this.contains(member2)) {
+			throw new IllegalArgumentException("member2 must be in the network");
+		}
+		Member memberOne = this.members.get(member1);
+		Member memberTwo = this.members.get(member2);
+		return memberOne.isFriendOf(memberTwo);
 	}
 
 	/**
@@ -103,8 +129,15 @@ public class Network {
 	 * @throws IllegalArgumentException if the precondition is not met
 	 */
 	public boolean isFollowerOf(String follower, String leader) {
-		// TODO
-		return false;
+		if (!this.contains(follower)) {
+			throw new IllegalArgumentException("follower must be in the network");
+		}
+		if (!this.contains(leader)) {
+			throw new IllegalArgumentException("leader must be in the network");
+		}
+		Member followerMember = this.members.get(follower);
+		Member leaderMember = this.members.get(leader);
+		return followerMember.isFollowerOf(leaderMember);
 	}
 
 	/**
@@ -121,8 +154,14 @@ public class Network {
 	 * @throws IllegalArgumentException if the precondition is not met
 	 */
 	public boolean addMember(String member) {
-		// TODO
-		return false;
+		if (member == null) {
+			throw new IllegalArgumentException("member cannot be null");
+		}
+		if (this.contains(member)) {
+			return false;
+		}
+		this.members.put(member, new Member(member));
+		return true;
 	}
 
 	/**
@@ -136,8 +175,10 @@ public class Network {
 	 * @throws IllegalArgumentException if the precondition is not met
 	 */
 	public boolean addInterest(String member, Interest interest) {
-		// TODO
-		return false;
+		if (!this.contains(member)) {
+			throw new IllegalArgumentException("member must be in the network");
+		}
+		return this.members.get(member).addInterest(interest);
 	}
 
 	/**
@@ -151,8 +192,19 @@ public class Network {
 	 * @throws IllegalArgumentException if the precondition is not met
 	 */
 	public boolean addFriendship(String member1, String member2) {
-		// TODO
-		return false;
+		if (!this.contains(member1)) {
+			throw new IllegalArgumentException("member1 must be in the network");
+		}
+		if (!this.contains(member2)) {
+			throw new IllegalArgumentException("member2 must be in the network");
+		}
+		if (member1.equals(member2)) {
+			throw new IllegalArgumentException("member1 and member2 must be different");
+		}
+		Member memberOne = this.members.get(member1);
+		Member memberTwo = this.members.get(member2);
+
+		return memberOne.addFriend(memberTwo);
 	}
 
 	/**
@@ -168,8 +220,18 @@ public class Network {
 	 * @throws IllegalArgumentException if the precondition is not met
 	 */
 	public boolean addFollower(String follower, String leader) {
-		// TODO
-		return false;
+		if (!this.contains(follower)) {
+			throw new IllegalArgumentException("follower must be in the network");
+		}
+		if (!this.contains(leader)) {
+			throw new IllegalArgumentException("leader must be in the network");
+		}
+		if (follower.equals(leader)) {
+			throw new IllegalArgumentException("follower and leader must be different");
+		}
+		Member followerMember = this.members.get(follower);
+		Member leaderMember = this.members.get(leader);
+		return leaderMember.addFollower(followerMember);
 	}
 
 	/**
@@ -192,7 +254,16 @@ public class Network {
 	 * @throws IllegalArgumentException if the precondition is not met
 	 */
 	public Collection<String> getPerfectMatches(String member) {
-		// TODO
+		if (!this.contains(member)) {
+			throw new IllegalArgumentException("member must be in the network");
+		}
+		Member memberToMatch = this.members.get(member);
+		Collection<String> perfectMatches = new ArrayList<String>();
+		for (Member m : this.members.values()) {
+			if (!m.equals(memberToMatch) && m.isPerfectMatch(memberToMatch)) {
+				perfectMatches.add(m.getUsername());
+			}
+		}
 		return null;
 	}
 
@@ -248,4 +319,5 @@ public class Network {
 		// TODO
 		return null;
 	}
+
 }
