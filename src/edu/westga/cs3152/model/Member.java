@@ -70,7 +70,7 @@ public class Member {
         if (this.follows.contains(follow)) {
             return false;
         }
-
+        follow.followers.add(this);
         return this.follows.add(follow);
     }
 
@@ -81,7 +81,7 @@ public class Member {
         if (this.followers.contains(follower)) {
             return false;
         }
-
+        follower.follows.add(this);
         return this.followers.add(follower);
     }
 
@@ -103,14 +103,14 @@ public class Member {
         if (member == null) {
             throw new IllegalArgumentException("Member cannot be null");
         }
-        return this.followers.contains(member);
+        return this.follows.contains(member);
     }
 
     public boolean isFollowedBy(Member member) {
         if (member == null) {
             throw new IllegalArgumentException("Member cannot be null");
         }
-        return this.follows.contains(member);
+        return this.followers.contains(member);
     }
 
     public boolean equals(Object obj) {
@@ -152,5 +152,28 @@ public class Member {
         return true;
     }
 
+    public boolean isFriendSuggestion(Member memberToMatch) {
+        if (memberToMatch == null) {
+            throw new IllegalArgumentException("Member cannot be null");
+        }
+        if (this.equals(memberToMatch)) {
+            return false;
+        }
+        if (this.friends.contains(memberToMatch)) {
+            return false;
+        }
+        if (this.follows.contains(memberToMatch)) {
+            return false;
+        }
+        if (this.followers.contains(memberToMatch)) {
+            return false;
+        }
+        for (Interest interest : this.interests) {
+            if (memberToMatch.interests.contains(interest)) {
+                return true;
+            }
+        }
+        return false;
+    }
     
 }

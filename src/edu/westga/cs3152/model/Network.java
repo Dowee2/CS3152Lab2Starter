@@ -259,12 +259,12 @@ public class Network {
 		}
 		Member memberToMatch = this.members.get(member);
 		Collection<String> perfectMatches = new ArrayList<String>();
-		for (Member m : this.members.values()) {
-			if (!m.equals(memberToMatch) && m.isPerfectMatch(memberToMatch)) {
-				perfectMatches.add(m.getUsername());
+		for (Member currmeMember : this.members.values()) {
+			if (!currmeMember.equals(memberToMatch) && memberToMatch.isPerfectMatch(currmeMember)) {
+				perfectMatches.add(currmeMember.getUsername());
 			}
 		}
-		return null;
+		return perfectMatches;
 	}
 
 	/**
@@ -291,8 +291,17 @@ public class Network {
 	 * @throws IllegalArgumentException if the precondition is not met
 	 */
 	public Collection<String> getFriendSuggestions(String member) {
-		// TODO
-		return null;
+		if (!this.contains(member)) {
+			throw new IllegalArgumentException("member must be in the network");
+		}
+		Member memberToMatch = this.members.get(member);
+		Collection<String> friendSuggestions = new ArrayList<String>();
+		for (Member currMember : this.members.values()) {
+			if (!currMember.equals(memberToMatch) && !currMember.isFriendOf(memberToMatch) && memberToMatch.isFriendSuggestion(currMember)) {
+				friendSuggestions.add(currMember.getUsername());
+			}
+		}
+		return friendSuggestions;
 	}
 
 	/**
@@ -316,8 +325,30 @@ public class Network {
 	 * @return a collection of members that are interest leaders
 	 */
 	public Collection<String> getInterestLeaders(Interest interest) {
-		// TODO
-		return null;
+
+		Collection<String> interestLeaders = new ArrayList<String>();
+		ArrayList<Member> membersWithInterest = new ArrayList<Member>();
+		for (Member currMember : this.members.values()) {
+			if (currMember.hasInterest(interest)) {
+				membersWithInterest.add(currMember);
+			}
+		}
+		for (Member currMember : this.members.values()) {
+			if (currMember.hasInterest(interest)) {
+				boolean isLeader = true;
+				for (Member currMemberWithInterest : membersWithInterest) {
+					if (!currMemberWithInterest.equals(currMember) && !currMemberWithInterest.isFollowerOf(currMember)) {
+						isLeader = false;
+						break;
+					}
+				}
+				if (isLeader) {
+					interestLeaders.add(currMember.getUsername());
+				}
+			}
+		}
+
+		return interestLeaders;
 	}
 
 }
