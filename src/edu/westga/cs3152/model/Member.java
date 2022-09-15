@@ -86,8 +86,8 @@ public class Member {
      * 
      * @precondition member != null && !follows.contains(member)
      * @postcondition getFollows().size() == getFollows().size()@prev + 1 && 
-     *               member.getFollowers().size() == member.getFollowers().size()@prev + 1 &&
-     *               member.getFollowers().contains(this) && getFollows().contains(member)
+     *                member.getFollowers().size() == member.getFollowers().size()@prev + 1 &&
+     *                member.getFollowers().contains(this) && getFollows().contains(member)
      * @param follow
      * @return true if the member was added, false otherwise
      */
@@ -202,7 +202,7 @@ public class Member {
      * Returns a list of all members that are perfect matches for this member
      * Where perfect match is defined as: if interests.containsAll(membertoMatch.interests)
      * 
-     * @precondition memberToMatch != null && memberToMatch != this
+     * @precondition memberToMatch != null && memberToMatch != this && !memberToMatch.isFriendOf(this)
      * @param memberToMatch the member to match
      * 
      * @return True if memberToMatch is a perfect match for this member
@@ -215,12 +215,6 @@ public class Member {
             return false;
         }
         if (this.friends.contains(memberToMatch)) {
-            return false;
-        }
-        if (this.follows.contains(memberToMatch)) {
-            return false;
-        }
-        if (this.followers.contains(memberToMatch)) {
             return false;
         }
         for (Interest interest : this.interests) {
@@ -236,7 +230,7 @@ public class Member {
      * Returns a list of all members that are friend suggestions for this member
      * Where friend suggestion is defined as: If a member has at least one interests in common with this member
      * 
-     * @precondition memberToMatch != null && memberToMatch != this
+     * @precondition memberToMatch != null && memberToMatch != this && !memberToMatch.isFriendOf(this)
      * 
      * @param memberToMatch the member to match
      * @return
@@ -249,12 +243,6 @@ public class Member {
             return false;
         }
         if (this.friends.contains(memberToMatch)) {
-            return false;
-        }
-        if (this.follows.contains(memberToMatch)) {
-            return false;
-        }
-        if (this.followers.contains(memberToMatch)) {
             return false;
         }
         for (Interest interest : this.interests) {
