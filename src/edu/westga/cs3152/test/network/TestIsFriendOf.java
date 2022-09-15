@@ -30,4 +30,5 @@ public class TestIsFriendOf {
 		network.addMember("member2");
 		assertFalse(network.isFriendOf("member1", "member2"));
 	}
+
 }
