@@ -244,7 +244,9 @@ public class Network {
 	 * (2) for all interests I in Interest.values() (hasInterest(M, I) if and only
 	 * if hasInterest(member, I))
 	 * 
-	 * Time complexity:
+	 * Time complexity: O((m-f)*i) where m is the number of members 
+	 * 							   and i is the maximum number of interests of a member 
+	 * 							   and f is the number of friends of the member
 	 * 
 	 * @pre contains(member)
 	 * @post none
@@ -280,7 +282,9 @@ public class Network {
 	 * AND hasInterest(M, I1) AND hasInterest(M, I2) AND hasInterest(member, I1) AND
 	 * hasInterest(member, I2))
 	 * 
-	 * Time complexity:
+	* Time complexity: O((m-f)*i) where m is the number of members 
+	 * 							  and i is the maximum number of interests of a member 
+	 * 							  and f is the number of friends of the member
 	 * 
 	 * @pre contains(member)
 	 * @post none
@@ -317,7 +321,8 @@ public class Network {
 	 * (3) for all members M in getMembers() (hasInterest(M, interest) AND
 	 * !M.equals(L)) implies isFollowerOf(M, L))
 	 * 
-	 * Time complexity:
+	 * Time complexity: O(2m + MI) where m is the number of members 
+	 * 							   and MI is the number of members with the specified interest))
 	 * 
 	 * @pre none
 	 * @post none
